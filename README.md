@@ -2,18 +2,18 @@
 
 An experiment with 
 
-* Kotlin
-* Vertx
-* Vertx GraphQL server
-* Expedia GraphQL for Kotlin modules
-* GraphQL Java
-* [Blockchain.com](https://blockchain.com) API
+* [Kotlin](https://kotlinlang.org/)
+* [Vertx](https://vertx.io/)
+* [Vertx GraphQL server](https://vertx.io/docs/vertx-web-graphql/java/) (hosting GraphiQL and Apollo websocket)
+* [Expedia GraphQL for Kotlin](https://github.com/ExpediaGroup/graphql-kotlin)
+* [GraphQL Java](https://github.com/graphql-java/graphql-java)
+* [Blockchain.com](https://blockchain.com) [API](https://api.blockchain.com/v3/)
 
 ## Instructions
 
 * Open the project in your favourite IDE
 * Start [App#main](src/main/kotlin/org/example/App.kt)
-* Browser to [http://localhost:8080/graphiql/]
+* Browse to [http://localhost:8080/graphiql/](http://localhost:8080/graphiql/])
 * Execute any of the following queries:
 
 ```graphql
