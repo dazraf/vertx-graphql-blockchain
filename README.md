@@ -12,7 +12,7 @@ An experiment with
 ## Instructions
 
 * Open the project in your favourite IDE
-* Start the [App#main](src/main/kotlin/org/example/App.kt)
+* Start [App#main](src/main/kotlin/org/example/App.kt)
 * Browser to [http://localhost:8080/graphiql/]
 * Execute any of the following queries:
 
