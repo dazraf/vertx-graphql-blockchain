@@ -1,16 +1,20 @@
 package org.example
 
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
+import io.netty.handler.codec.http.HttpHeaderValues
 import io.vertx.core.AbstractVerticle
 import io.vertx.core.Promise
 import io.vertx.core.Vertx
+import io.vertx.core.http.HttpMethod
 import io.vertx.core.http.HttpServerOptions
 import io.vertx.core.json.jackson.DatabindCodec
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.handler.BodyHandler
+import io.vertx.ext.web.handler.CorsHandler
 import io.vertx.ext.web.handler.graphql.*
 import org.example.graphql.GraphQLConfigure
 import org.slf4j.LoggerFactory
+import java.util.concurrent.atomic.AtomicInteger
 
 class App(private val port: Int = 8080) : AbstractVerticle() {
   companion object {
@@ -40,15 +44,37 @@ class App(private val port: Int = 8080) : AbstractVerticle() {
     val graphQL = GraphQLConfigure.configure(vertx)
 
     // basic middleware
+    val nextRequestId = AtomicInteger(0)
+    router.route().handler { routingContext ->
+      val requestId = nextRequestId.incrementAndGet()
+      val request = routingContext.request()
+      val start = System.currentTimeMillis()
+      routingContext.addBodyEndHandler {
+        val sb = StringBuilder()
+          .appendLine("Request $requestId: ${request.method()} ${request.uri()} ${request.response().statusCode} ${request.response().statusMessage} - ${System.currentTimeMillis() - start} millis")
+        val body = if (routingContext.request()
+            .getHeader(io.vertx.core.http.HttpHeaders.CONTENT_TYPE) == HttpHeaderValues.APPLICATION_JSON.toString()
+        ) {
+          routingContext.bodyAsJson.encodePrettily()
+        } else {
+          routingContext.bodyAsString
+        }
+        if (body != null) {
+          sb.appendLine("Body: $body")
+        }
+        log.info(sb.toString())
+      }
+
+      routingContext.next()
+    }
     router.route().handler(BodyHandler.create());
 
     // apollo ws handler
-    router.route("/graphql").handler(ApolloWSHandler.create(graphQL))
+    router.route("/").handler(ApolloWSHandler.create(graphQL, ApolloWSOptions()))
 
     // main graphql http server
-    router.route("/graphql").handler(
-      GraphQLHandler.create(
-        graphQL,
+    router.route("/").handler(
+      GraphQLHandler.create(graphQL,
         GraphQLHandlerOptions()
           .setRequestMultipartEnabled(true)
           .setRequestBatchingEnabled(true)
@@ -59,7 +85,7 @@ class App(private val port: Int = 8080) : AbstractVerticle() {
     router.route("/graphiql/*").handler(
       GraphiQLHandler.create(
         GraphiQLHandlerOptions()
-          .setGraphQLUri("/graphql")
+          .setGraphQLUri("/")
           .setEnabled(true)
       )
     )
