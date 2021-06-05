@@ -5,14 +5,15 @@ import io.netty.handler.codec.http.HttpHeaderValues
 import io.vertx.core.AbstractVerticle
 import io.vertx.core.Promise
 import io.vertx.core.Vertx
-import io.vertx.core.http.HttpMethod
 import io.vertx.core.http.HttpServerOptions
 import io.vertx.core.json.jackson.DatabindCodec
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.handler.BodyHandler
-import io.vertx.ext.web.handler.CorsHandler
 import io.vertx.ext.web.handler.StaticHandler
-import io.vertx.ext.web.handler.graphql.*
+import io.vertx.ext.web.handler.graphql.ApolloWSHandler
+import io.vertx.ext.web.handler.graphql.ApolloWSOptions
+import io.vertx.ext.web.handler.graphql.GraphQLHandler
+import io.vertx.ext.web.handler.graphql.GraphQLHandlerOptions
 import org.example.graphql.GraphQLConfigure
 import org.slf4j.LoggerFactory
 import java.util.concurrent.atomic.AtomicInteger
@@ -73,7 +74,7 @@ class App(private val port: Int = 8080) : AbstractVerticle() {
     router.route().handler(BodyHandler.create());
 
     // apollo ws handler
-    router.route("/").handler(ApolloWSHandler.create(graphQL, ApolloWSOptions()))
+    router.route("/").handler(ApolloWSHandler.create(graphQL, ApolloWSOptions().setKeepAlive(5000)))
 
     // main graphql http server
     router.route("/").handler(
@@ -85,18 +86,11 @@ class App(private val port: Int = 8080) : AbstractVerticle() {
     )
 
     router.route("/playground/*").handler(StaticHandler.create("playground"))
-//    // graphiql ui
-//    router.route("/graphiql/*").handler(
-//      GraphiQLHandler.create(
-//        GraphiQLHandlerOptions()
-//          .setGraphQLUri("/")
-//          .setEnabled(true)
-//      )
-//    )
 
     // ws sub protocol for apollo ws
     val httpServerOptions = HttpServerOptions()
       .addWebSocketSubProtocol("graphql-ws")
+      .setTcpKeepAlive(true)
 
     // the server
     vertx

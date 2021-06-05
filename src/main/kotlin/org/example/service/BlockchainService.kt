@@ -56,9 +56,8 @@ class BlockchainService(private val vertx: Vertx) {
       description = "ticker symbol"
     ) symbol: String
   ): Publisher<Ticker> {
-    return Observable.interval(0, 5, TimeUnit.SECONDS)
+    return Observable.interval(0, 1, TimeUnit.SECONDS)
       .flatMap {
-        log.info("getting symbol /v3/exchange/tickers/${symbol}")
         val future = client.get("/v3/exchange/tickers/${symbol}")
           .send()
           .map {
@@ -69,7 +68,6 @@ class BlockchainService(private val vertx: Vertx) {
             } else {
               try {
                 val data = DatabindCodec.mapper().readValue(it.body().bytes, Ticker::class.java)
-                log.info("received with ${it.statusCode()} ${it.statusMessage()} - $data")
                 data
               } catch (err: Throwable) {
                 log.error("failed to parse ${it.body().toString()}")
