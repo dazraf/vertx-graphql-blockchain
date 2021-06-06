@@ -77,7 +77,8 @@ class App(private val port: Int = 8080) : AbstractVerticle() {
 
     // main graphql http server
     router.route("/").handler(
-      GraphQLHandler.create(graphQL,
+      GraphQLHandler.create(
+        graphQL,
         GraphQLHandlerOptions()
           .setRequestMultipartEnabled(true)
           .setRequestBatchingEnabled(true)

@@ -1,6 +1,6 @@
 # Vertx-GraphQL-Blockchain
 
-An experiment with 
+An experiment with
 
 * [Kotlin](https://kotlinlang.org/)
 * [Vertx](https://vertx.io/)
