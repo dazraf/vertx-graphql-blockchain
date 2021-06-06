@@ -53,22 +53,18 @@ class BlockchainService(private val vertx: Vertx) {
   }
 
   @GraphQLQuery(name = "tickers", description = "Get Tickers")
-  fun tickers(
-    @GraphQLArgument(
-      name = "symbol",
-      description = "ticker symbol"
-    ) symbol: String? = null
-  ): CompletableFuture<List<Ticker>> {
+  fun tickers(): CompletableFuture<List<Ticker>> {
     return client.get("/v3/exchange/tickers")
       .send()
-      .map {
-        if ((it.statusCode() / 100) != 2) {
-          error("failed to call https://api.blockchain.com/v3/exchange/tickers - ${it.statusCode()} ${it.statusMessage()}")
+      .map { response ->
+        if ((response.statusCode() / 100) != 2) {
+          error("failed to call https://api.blockchain.com/v3/exchange/tickers - ${response.statusCode()} ${response.statusMessage()}")
         }
         try {
-          DatabindCodec.mapper().readValue(it.body().bytes, object : TypeReference<List<Ticker>>() {})
+          DatabindCodec.mapper().readValue(response.body().bytes, object : TypeReference<List<Ticker>>() {})
+            .filter { it.last_trade_price != 0.0 }
         } catch (err: Throwable) {
-          throw Exception("failed to parse response ${it.body()}: ${err.message}", err)
+          throw Exception("failed to parse response ${response.body()}: ${err.message}", err)
         }
       }.toCompletionStage().toCompletableFuture()
   }
