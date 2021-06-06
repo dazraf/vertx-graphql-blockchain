@@ -42,6 +42,8 @@ subscription {
 }
 ```
 
+### BTCUSD Ticker and L2 Order Book sub selection
+
 ```graphql 
 
 query {
