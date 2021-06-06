@@ -41,3 +41,27 @@ subscription {
   }
 }
 ```
+
+```graphql 
+
+query {
+  ticker(symbol: "BTC-USD") {
+		symbol
+    last_trade_price
+    orderBookL2 {
+      asks {
+        ... entryFields
+      }
+      bids {
+        ... entryFields
+      }
+    }
+  }
+}
+
+fragment entryFields on OrderBookEntry {
+  px
+  qty
+}
+
+```

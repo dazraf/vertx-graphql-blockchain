@@ -41,7 +41,6 @@ class App(private val port: Int = 8080) : AbstractVerticle() {
   }
 
   override fun start(startPromise: Promise<Void>) {
-    log.info("configuring application")
     val router = Router.router(vertx)
     val graphQL = GraphQLConfigure.configure(vertx)
 
@@ -101,10 +100,10 @@ class App(private val port: Int = 8080) : AbstractVerticle() {
       }
       .listen(port)
       .onSuccess {
-        log.info("application configured")
-        println("graphql:  http://localhost:$port")
+        log.info("application started")
+        println("graphql:     http://localhost:$port")
         println("graphql-ws:  ws://localhost:$port")
-        println("graphiql: http://localhost:$port/playground/")
+        println("graphiql:    http://localhost:$port/playground/")
         startPromise.complete()
       }
   }
