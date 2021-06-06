@@ -17,7 +17,7 @@ An experiment with
 * Start [App#main](src/main/kotlin/org/example/App.kt)
 * Browse
   to [http://localhost:8080/playground/index.html](http://localhost:8080/playground/index.html)
-* Execute any of the following subscriptions:
+* Execute any of the following:
 
 ### Time subscription
 
