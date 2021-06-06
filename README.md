@@ -24,7 +24,7 @@ An experiment with
 ```graphql
 subscription {
   time {
-		value
+	value
   }
 }
 ```
