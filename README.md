@@ -48,7 +48,7 @@ subscription {
 
 query {
   ticker(symbol: "BTC-USD") {
-		symbol
+	symbol
     last_trade_price
     orderBookL2 {
       asks {
